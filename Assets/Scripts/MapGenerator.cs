@@ -23,7 +23,7 @@ public class MapGenerator : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             GenerateMap();
         }
@@ -37,7 +37,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void GenerateMap()
+    void GenerateMap() //this is what generates an actual map to display
     {
         map = new int[width, height];
         RandomFillMap();
@@ -46,9 +46,12 @@ public class MapGenerator : MonoBehaviour
         {
             SmoothMap();
         }
+
+        MeshGenerator meshGen = GetComponent<MeshGenerator>();
+        meshGen.GenerateMesh(map, 1);
     }
 
-    void RandomFillMap()
+    void RandomFillMap() //this is the code that randomly choses whether each coordinate is 1(filled) or 0(empty)
     {
         if (useRandomSeed)
         {
@@ -73,15 +76,13 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void SmoothMap()
+    void SmoothMap() //this removes cubes if it has < 4 neighbours and adds if > 4
     {
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 int neighbourWallTiles = GetSurroundingWallCount(x, y);
-
-                //map[x, y] = (neighbourWallTiles > 4) ? 1 : 0;
 
                 if (neighbourWallTiles > 4)
                 {
@@ -95,7 +96,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    int GetSurroundingWallCount(int gridX, int gridY)
+    int GetSurroundingWallCount(int gridX, int gridY) //this counts the number of squares surrounding any given square
     {
         int wallCount = 0;
         for (int neighbourX = (gridX - 1); neighbourX <= gridX + 1; neighbourX++)
@@ -119,19 +120,19 @@ public class MapGenerator : MonoBehaviour
         return wallCount;
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmos() //this is essentially the drawMap equivalent of the textRPG, this is what *draws* the squares
     {
-        if (map != null)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    Gizmos.color = (map[x, y] == 1) ? Color.black : Color.white; //assigns colour based on if 1 or 0
-                    Vector3 pos = new Vector3(-width / 2 + x + .5f, 0, 0 - height / 2 + y + .5f); //idk
-                    Gizmos.DrawCube(pos, Vector3.one);
-                }
-            }
-        }
+        //if (map != null)
+        //{
+        //    for (int x = 0; x < width; x++)
+        //    {
+        //        for (int y = 0; y < height; y++)
+        //        {
+        //            Gizmos.color = (map[x, y] == 1) ? Color.black : Color.white; //assigns colour based on if 1 or 0
+        //            Vector3 pos = new Vector3(-width / 2 + x + .5f, 0, 0 - height / 2 + y + .5f); //idk
+        //            Gizmos.DrawCube(pos, Vector3.one);
+        //        }
+        //    }
+        //}
     }
 }
